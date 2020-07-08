@@ -1,11 +1,11 @@
-%% CI285 Functional Programming 
-%% Assignment 1: Image Processing
-%% Author: Awais Khatab 
+%% IRP (Image Repair processing)
+%% Author: Awais Khatab
+%% Licence: MIT
 
-%% Initialize the Matlab environment.
+%% Initialize Matlab environment.
     clc; clear; close all;
 
-%% Read 2 images(input).
+%% Read images(input).
     inputImage1=imread('img1.jpg');   figure; imshow(inputImage1); title('Input Image 1');
     inputImage2=imread('img2.jpg');   figure; imshow(inputImage2); title('Input Image 2');
 
@@ -36,10 +36,12 @@
 
 %% Making sure that the replacement is seamless.
     missedPart=(grayImage1==255);
-    denoisedMissedPart = imopen(missedPart,strel('disk', 2)); % Filter the "missing area" in "image1.jpg".
-    ExtendedMissedPart=imdilate(denoisedMissedPart,strel('disk', 20)); % Extend the "missing area" in "image1.jpg" for 20 pixels.
-    
-    seamRemovedPart= ExtendedMissedPart-missedPart ;  % Remove the seam part.
+    % Filter the "missing area" in "image1.jpg".
+    denoisedMissedPart = imopen(missedPart,strel('disk', 2));
+    % Extend the "missing area" in "image1.jpg" for 20 pixels.
+    ExtendedMissedPart=imdilate(denoisedMissedPart,strel('disk', 20));
+    % Remove the seam part.
+    seamRemovedPart= ExtendedMissedPart-missedPart ;
 
     % Average "denosed image2.jpg" and "image1.jpg"  for seam-removed area.
     [row,col] =find(seamRemovedPart>0);
@@ -59,19 +61,14 @@
 
 %% Display the similarity between the recovered image and "Penguins.jpg".
     PenguinsImage=imread('Penguins.jpg');
-    
+
     pixelWiseDifference=(abs(double(PenguinsImage(:,:,1))-double(FinalImage(:,:,1)))+...
         abs(double(PenguinsImage(:,:,2))-double(FinalImage(:,:,2)))+...
         abs(double(PenguinsImage(:,:,3))-double(FinalImage(:,:,3))))/3 ;
-    
+
     similarityScore=mean(mean(pixelWiseDifference))
-    
+
     xlabel(strcat('\fontsize{15}\color{blue}Similarity score is : \color{red}',num2str(similarityScore),'\color{blue}[pixels].  This score will be between 0 and 255. The closer the score is to 0, the better the result after image processing!'))
-    
-%% This program can do excellent image processing but can not perfectly put an iage back togtehr from two sources of images,
-%% maybe if there was multiple image sources, then the similarity score would be reduced further closer to being a perfect match
-%% of the orginal image.
 
-
-
-
+%% TODO: Add universal image input --> Folder "Images"
+%% TODO: Improve Algorithm to enhance and create perfect restoration
